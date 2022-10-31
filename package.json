@@ -3,5 +3,23 @@
     "console.table": "^0.10.0",
     "inquirer": "^8.2.5",
     "mysql2": "^2.3.3"
-  }
+  },
+  "name": "cheese-man-cms",
+  "description": "take a look at the illustrous and elusive innnerworks of Cheese man Incoporated",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PhilipHuang2/cheese-man-cms.git"
+  },
+  "author": "Philip Huang",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/PhilipHuang2/cheese-man-cms/issues"
+  },
+  "homepage": "https://github.com/PhilipHuang2/cheese-man-cms#readme"
 }
