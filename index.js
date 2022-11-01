@@ -11,6 +11,7 @@
 //the quit the function
 //import modules
 const inquirer = require('inquirer');
+const {showDepartments} = require('./function.js');
 
 
 //outside array initialization for easier configuration and view
@@ -23,7 +24,6 @@ const choices = [
     "Update an employee role",
     "Quit"
 ];
-
 
 const mainMenu =[
     {
@@ -43,6 +43,9 @@ const main = () => {
             return;
         else{
             console.log(`The user has selected the "${answers.action}" action.`);
+            if(answers.action == "View all departments"){
+                showDepartments();
+            }
             main();
         }
     })
