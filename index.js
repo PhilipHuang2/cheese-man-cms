@@ -75,6 +75,18 @@ async function showEmployees(db){
     console.table(employee[0]);
 }
 
+async function addDepartment(db){
+    // let departments = await db.execute("Select name from department");
+    // // an array of existing department names;
+    // let exists = departments[0].map((element)=> element.name);
+    // console.log(exists);
+    const {department} = await inquirer.prompt({
+        name:"department",
+        message:"Please add a new department.",
+    });
+    await db.execute(`INSERT INTO department(name) VALUES("${department}")`);
+}
+
 async function main(){
     try {
         const {action} = await inquirer.prompt(mainMenu);
@@ -100,6 +112,9 @@ async function main(){
                 break;
             case "View all Employees":
                 await showEmployees(db);
+                break;
+            case "Add a department":
+                await addDepartment(db);
                 break;
         }   
         db.end();
