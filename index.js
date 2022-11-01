@@ -21,6 +21,7 @@ const bluebird = require('bluebird');
 const choices = [
     "View all departments",
     "View all roles",
+    "View all Employees",
     "Add a department",
     "Add a role",
     "Add an employee",
@@ -37,41 +38,49 @@ const mainMenu =[
     }
 ];
 
-async function showDepartments(){
-    const db = await mysql.createConnection(
-        {
-            host:'localhost',
-            user:'root',
-            database:'cheese_man_db',
-            Promise:bluebird
-        }
-    );
-    await db.query("Select name as department_name from department",(err,result)=>{
-        if(err)
-            console.log(err);
-        else{
-            console.log("went into the promise");
-            console.table(result);
-        }
-    });
+async function showDepartments(db){
+    const departments = await db.execute("Select id as department_id, name as department_name from department");
+    // how the hell to access the data in  promise
+
+    console.table(departments[0]);
 }
 
-function main(){
-    inquirer
-    .prompt(mainMenu)
-    .then((answers)=>{
-        // if the user selects quit then end the function
-        if(answers.action == "Quit")
-            return;
-        else{
-            console.log(`The user has selected the "${answers.action}" action.\n`);
-            if(answers.action == "View all departments"){
-                showDepartments();
-            }
-            main();
-        }
-    })
+async function showRoles(db){
+    const departments = await db.execute("select title as job_title, role.id as role_id, department.name as department, salary from role inner join department on role.department_id = department.id");
+    console.table(departments[0]);
+}
 
+async function main(){
+    try {
+        const {action} = await inquirer.prompt(mainMenu);
+        if(action == "Quit")
+            process.exit(0);
+
+        const db = await mysql.createConnection(
+            {
+                host:'localhost',
+                user:'root',
+                password: "password",
+                database:'cheese_man_db',
+                Promise:bluebird
+            }
+        );
+        console.log(`The user has selected the "${action}" action.\n`);
+        switch(action){
+            case "View all departments":
+                await showDepartments(db);
+                break;
+            case "View all roles":
+                await showRoles(db);
+                break;
+        }   
+        db.end();
+        main();
+
+    } catch(err) {
+        console.log("Ugh!")
+        console.log(err);
+    }
 };
 
 
