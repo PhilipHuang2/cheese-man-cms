@@ -231,7 +231,6 @@ async function main(){
                 Promise:bluebird
             }
         );
-        console.log(`The user has selected the "${action}" action.\n`);
         switch(action){
             case "View all departments":
                 await showDepartments(db);
