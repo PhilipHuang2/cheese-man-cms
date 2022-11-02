@@ -178,6 +178,44 @@ async function addEmployee(db){
         } 
 }
 
+async function updateEmployee(db){
+    //Take in the current employees
+    const employeeData = (await db.execute("SELECT id,CONCAT(first_name,' ',last_name) as person from employee"))[0];
+    const employee = employeeData.map((element)=> element.person);
+    //Take in Current Roles
+     // pulling in available roles
+     const roleData = (await db.execute("SELECT id,title from role"))[0];
+     const roles = roleData.map((element)=>element.title);
+    // Update one row
+    
+    let {id,role_id} = await inquirer.prompt([{
+        name:"id",
+        type:"list",
+        choices: employee,
+        message: "Choose a current employee.",
+        filter(answer){
+            for(let i = 0; i < employeeData.length; i++){
+                if(employeeData[i].person == answer)
+                    return employeeData[i].id;
+            }
+            }
+        },
+        {
+            name:"role_id",
+            type:"list",
+            choices: roles,
+            message: "Choose this employee's new role",
+            filter(answer){
+                for(let i = 0; i < roleData.length; i++){
+                    if(roleData[i].title == answer)
+                        return roleData[i].id;
+                }
+            }
+        }
+    ])
+    db.query(`UPDATE employee SET role_id=${role_id} WHERE id=${id}`);
+}
+
 async function main(){
     try {
         const {action} = await inquirer.prompt(mainMenu);
@@ -214,6 +252,7 @@ async function main(){
                 await addEmployee(db);
                 break;
             case "Update an employee role":
+                await updateEmployee(db);
                 break;
         }   
         db.end();
