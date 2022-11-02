@@ -31,6 +31,8 @@ On a more serious note, this project is a way to pratice MYSQL database pratices
 
 # Example 
 
+[Untitled_ Nov 1, 2022 11_20 PM.webm](https://user-images.githubusercontent.com/5439889/199413315-45ecf5c3-56a4-429c-b914-766b76f36396.webm)
+
 
 # License
 
