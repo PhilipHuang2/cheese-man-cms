@@ -13,7 +13,6 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2/promise');
 const bluebird = require('bluebird');
-// const { showDepartments} = require('./function.js');
 
 
 
@@ -76,15 +75,44 @@ async function showEmployees(db){
 }
 
 async function addDepartment(db){
-    // let departments = await db.execute("Select name from department");
-    // // an array of existing department names;
-    // let exists = departments[0].map((element)=> element.name);
-    // console.log(exists);
     const {department} = await inquirer.prompt({
         name:"department",
         message:"Please add a new department.",
     });
     await db.execute(`INSERT INTO department(name) VALUES("${department}")`);
+}
+
+async function addRole(db){
+    const data = await db.execute("SELECT * from department");
+    const departments = data[0].map((element)=>element.name);
+    const {name,salary, department } = await inquirer.prompt([{
+        name:"name",
+        message:"Please add a new role"
+        },
+        {
+            name:"salary",
+            type: "input",
+            message: "please enter the salary this role has",
+            validate(answer){
+                if(isNaN(answer))
+                    return "This is not a valid salary";
+                return true;
+            }
+        },
+        {
+            name: "department",
+            type: "list",
+            choices: departments,
+            message: "Please choose the department this role belongs to.",
+            filter(answer){
+                for(let i = 0; i < data[0].length;i++)
+                {
+                    if(data[0][i].name == answer)
+                        return data[0][i].id;
+                }
+            }
+        }]);
+    db.execute(`INSERT INTO ROLE(department_id, title, salary) VALUES("${department}","${name}","${salary}")`);
 }
 
 async function main(){
@@ -115,6 +143,13 @@ async function main(){
                 break;
             case "Add a department":
                 await addDepartment(db);
+                break;
+            case "Add a role":
+                await addRole(db);
+                break;
+            case "Add an employee":
+                break;
+            case "Update an employee role":
                 break;
         }   
         db.end();

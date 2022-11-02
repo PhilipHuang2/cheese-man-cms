@@ -15,17 +15,6 @@ VALUES
 (3, "One of many hands", 3000),
 (3, "Yes Man", 1000);
 
-INSERT INTO role(department_id, title, salary)
-VALUES
-(1, "Master of Cheese", 10000),
-(1, "Cheese Graterer", 4500),
-(1, "Cow Whisperer", 5000),
-(2, "THE BIG ONE", 8000),
-(2, "Spooker", 4700),
-(3, "Master Lineman", 7000),
-(3, "One of many hands", 3000),
-(3, "Yes Man", 1000);
-
 INSERT INTO employee(role_id, manager_id, first_name, last_name)
 VALUES
 (1,null, "Paul", "Jackson"),
