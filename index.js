@@ -115,6 +115,69 @@ async function addRole(db){
     db.execute(`INSERT INTO ROLE(department_id, title, salary) VALUES("${department}","${name}","${salary}")`);
 }
 
+async function addEmployee(db){
+    // pulling in available roles
+    const roleData = (await db.execute("SELECT id,title from role"))[0];
+    const roles = roleData.map((element)=>element.title);
+    // Pulling all available employees to be managers
+    const employeeData = (await db.execute("SELECT id,CONCAT(first_name,' ',last_name) as manager from employee"))[0];
+    const managers = employeeData.map((element)=> element.manager);
+    let {first_name, last_name, role, hasManager, manager} = await inquirer.prompt(
+        [
+            {name:"first_name",
+                message: "Please enter the new Employee's First Name",
+                validate(answer){
+                    if(answer)
+                        return true;
+                    return "Please enter something."
+                }
+            },
+            {name:"last_name",
+                message: "Please enter the new Employee's Last Name",
+                validate(answer){
+                    if(answer)
+                        return true;
+                    return "Please enter something."
+                }
+            },
+            {name: "role",
+                type: "list",
+                message: "Please choose the new Employee's role.",
+                choices: roles,
+                filter(answer){
+                    for(let i = 0; i < roleData.length;i++)
+                {
+                    if(roleData[i].title == answer)
+                        return roleData[i].id
+                }
+                }
+            },
+            {name: "hasManager",
+                type: "confirm",
+                message: "Does this employee have a manager y/N?"
+            },
+            {name: "manager",
+                message: "Please select the new Employee's manager",
+                type: "list",
+                choices: managers,
+                filter(answer){
+                    for(let i = 0; i < employeeData.length;i++)
+                {
+                    if(employeeData[i].manager == answer)
+                        return employeeData[i].id;
+                }
+                },
+                when: (answers)=> answers.hasManager
+            }         
+        ])
+
+        if(!hasManager)
+            db.execute(`INSERT INTO EMPLOYEE(role_id, first_name, last_name) VALUES("${role}", "${first_name}", "${last_name}")`);
+        else{
+            db.execute(`INSERT INTO EMPLOYEE(role_id, manager_id, first_name, last_name) VALUES("${role}","${manager}", "${first_name}", "${last_name}")`);
+        } 
+}
+
 async function main(){
     try {
         const {action} = await inquirer.prompt(mainMenu);
@@ -148,6 +211,7 @@ async function main(){
                 await addRole(db);
                 break;
             case "Add an employee":
+                await addEmployee(db);
                 break;
             case "Update an employee role":
                 break;
